@@ -6,7 +6,6 @@ import datetime as dt
 import urllib.request, json
 import os
 import numpy as np
-import tensorflow as tf # This code has been tested with TensorFlow 1.6
 from sklearn.preprocessing import MinMaxScaler
 from datetime import datetime
 
@@ -14,7 +13,7 @@ from datetime import datetime
 api_key = '6BXJN99BEYM5VWU3'
 
 # Amazon stock market prices
-ticker = "MSFT"
+ticker = "AMZN"
 
 # JSON file with all the stock market data for AMZN from the last 20 years
 url_string = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=%s&outputsize=full&apikey=%s"%(ticker,api_key)
@@ -55,7 +54,7 @@ df = df.sort_values('Date')
 # data visualization
 plt.figure(figsize = (18,9))
 plt.plot(range(df.shape[0]),(df['Low']+df['High'])/2.0)
-plt.xticks(range(0,df.shape[0],500),df['Date'].loc[::500],rotation=45)
+plt.xticks(range(0,df.shape[0],500),df['Date'].loc[::100],rotation=45)
 plt.xlabel('Date',fontsize=18)
 plt.ylabel('Mid Price',fontsize=18)
 plt.show()
@@ -105,7 +104,7 @@ test_data = scaler.transform(test_data).reshape(-1)
 # So the data will have a smoother curve than the original ragged data
 EMA = 0.0
 gamma = 0.1
-for ti in range(1100):
+for ti in range(half_count):
   EMA = gamma*train_data[ti] + (1-gamma)*EMA
   train_data[ti] = EMA
 
@@ -141,7 +140,7 @@ print('MSE error for EMA averaging: %.5f'%(0.5*np.mean(mse_errors)))
 plt.figure(figsize = (18,9))
 plt.plot(range(df.shape[0]),all_mid_data,color='b',label='True')
 plt.plot(range(0,N),run_avg_predictions,color='orange', label='Prediction')
-#plt.xticks(range(0,df.shape[0],50),df['Date'].loc[::50],rotation=45)
+plt.xticks(range(0,df.shape[0],500),df['Date'].loc[::500],rotation=45)
 plt.xlabel('Date')
 plt.ylabel('Mid Price')
 plt.legend(fontsize=18)
